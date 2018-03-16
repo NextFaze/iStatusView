@@ -20,10 +20,6 @@ it, simply add the following line to your Podfile:
 pod 'iStatusView'
 ```
 
-## Author
-
-awulf, awulf@nextfaze.com
-
 ## License
 
-iStatusView is available under the MIT license. See the LICENSE file for more info.
+iStatusView is available under the Apache license. See the LICENSE file for more info.
