@@ -3,6 +3,7 @@ use_frameworks!
 target 'iStatusView_Example' do
   pod 'iStatusView', :path => '../'
   pod 'SVProgressHUD'
+  pod 'SnapKit'
 
   target 'iStatusView_Tests' do
     inherit! :search_paths

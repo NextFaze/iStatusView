@@ -15,10 +15,24 @@ import UIKit
  - loading: status view showing loading
  - error: status view showing error
  */
-enum StatusViewState {
+public enum StatusViewState {
     case hidden
     case loading
     case error
+}
+
+public enum StatusViewError: Error {
+    /// Loading View is not set, happens with no view is added for loading
+    case notInitialisedCorrectly
+}
+
+extension StatusViewError: LocalizedError {
+    var localizedDescription: String {
+        switch self {
+        case .notInitialisedCorrectly:
+            return NSLocalizedString("Loading View is not set, please set it before using StatusView", comment: "error message")
+        }
+    }
 }
 
 @objc public class StatusView: UIView {
@@ -44,9 +58,35 @@ enum StatusViewState {
     }
     
     
-    private var state = StatusViewState.hidden
+    private(set) var state = StatusViewState.hidden
     
-    private var loadingView: UIView
+    public var loadingView: UIView? {
+        didSet {
+            guard let loadingView = self.loadingView else{
+                return
+            }
+            
+            loadingView.translatesAutoresizingMaskIntoConstraints = false
+            //        self.loadingView.strokeColor = Appearance.importantTextColor;
+            //        self.loadingView.strokeThickness = 4
+            //        self.loadingView.radius = 30
+            loadingView.clipsToBounds = true
+            addSubview(loadingView)
+            
+            //        self.loadingView.snp.makeConstraints { (make) in
+            //            make.width.equalTo(self.loadingView.radius * 2 + self.loadingView.strokeThickness)
+            //            make.height.equalTo(self.loadingView.radius * 2 + self.loadingView.strokeThickness)
+            //            make.centerX.equalTo(self)
+            //        }
+            loadingView.addConstraint(NSLayoutConstraint(item: loadingView,
+                                                         attribute: .centerX,
+                                                         relatedBy: .equal,
+                                                         toItem: self,
+                                                         attribute: .centerX,
+                                                         multiplier: 1.0,
+                                                         constant: 0.0))
+        }
+    }
     
     public var button = UIButton()
     public var titleLabel = UILabel()
@@ -75,29 +115,62 @@ enum StatusViewState {
         self.statusImageView.translatesAutoresizingMaskIntoConstraints = false
         self.statusImageView.contentMode = .scaleAspectFit
         self.addSubview(self.statusImageView)
-        self.statusImageView.snp.makeConstraints { (make) in
-            make.centerX.equalTo(self)
-            make.leading.trailing.greaterThanOrEqualTo(self).inset(40)
-        }
         
-        self.loadingView.translatesAutoresizingMaskIntoConstraints = false
-//        self.loadingView.strokeColor = Appearance.importantTextColor;
-//        self.loadingView.strokeThickness = 4
-//        self.loadingView.radius = 30
-        self.loadingView.clipsToBounds = true
-        self.addSubview(self.loadingView)
-        self.loadingView.snp.makeConstraints { (make) in
-            make.width.equalTo(self.loadingView.radius * 2 + self.loadingView.strokeThickness)
-            make.height.equalTo(self.loadingView.radius * 2 + self.loadingView.strokeThickness)
-            make.centerX.equalTo(self)
-        }
+//        self.statusImageView.snp.makeConstraints { (make) in
+//            make.centerX.equalTo(self)
+//            make.leading.trailing.greaterThanOrEqualTo(self).inset(40)
+//        }
+//
+        self.statusImageView.addConstraint(NSLayoutConstraint(item: self.statusImageView,
+                                                               attribute: .centerX,
+                                                               relatedBy: .equal,
+                                                               toItem: self,
+                                                               attribute: .centerX,
+                                                               multiplier: 1.0,
+                                                               constant: 0.0))
+        self.statusImageView.addConstraint(NSLayoutConstraint(item: self.statusImageView,
+                                                               attribute: .leading,
+                                                               relatedBy: .equal,
+                                                               toItem: self,
+                                                               attribute: .leading,
+                                                               multiplier: 1.0,
+                                                               constant: 40.0))
+        self.statusImageView.addConstraint(NSLayoutConstraint(item: self.statusImageView,
+                                                               attribute: .trailing,
+                                                               relatedBy: .greaterThanOrEqual,
+                                                               toItem: self,
+                                                               attribute: .trailing,
+                                                               multiplier: 1.0,
+                                                               constant: -40.0))
         
         self.button.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(self.button)
-        self.button.snp.makeConstraints { (make) in
-            make.centerX.equalTo(self)
-            make.leading.trailing.greaterThanOrEqualTo(self).inset(40)
-        }
+        
+//        self.button.snp.makeConstraints { (make) in
+//            make.centerX.equalTo(self)
+//            make.leading.trailing.greaterThanOrEqualTo(self).inset(40)
+//        }
+        self.button.addConstraint(NSLayoutConstraint(item: self.button,
+                                                      attribute: .centerX,
+                                                      relatedBy: .equal,
+                                                      toItem: self,
+                                                      attribute: .centerX,
+                                                      multiplier: 1.0,
+                                                      constant: 0.0))
+        self.button.addConstraint(NSLayoutConstraint(item: self.button,
+                                                      attribute: .leading,
+                                                      relatedBy: .greaterThanOrEqual,
+                                                      toItem: self,
+                                                      attribute: .leading,
+                                                      multiplier: 1.0,
+                                                      constant: 0.0))
+        self.button.addConstraint(NSLayoutConstraint(item: self.button,
+                                                      attribute: .trailing,
+                                                      relatedBy: .greaterThanOrEqual,
+                                                      toItem: self,
+                                                      attribute: .trailing,
+                                                      multiplier: 1.0,
+                                                      constant: 0.0))
         
         self.titleLabel.translatesAutoresizingMaskIntoConstraints = false
         //self.titleLabel.textColor = Appearance.importantTextColor
@@ -105,11 +178,42 @@ enum StatusViewState {
         self.titleLabel.numberOfLines = 0
         self.titleLabel.textAlignment = .center
         self.addSubview(self.titleLabel)
-        self.titleLabel.snp.makeConstraints { (make) in
-            make.centerX.equalTo(self)
-            make.leading.trailing.greaterThanOrEqualTo(self).inset(40)
-            make.width.lessThanOrEqualTo(300).priority(900)
-        }
+        
+//        self.titleLabel.snp.makeConstraints { (make) in
+//            make.centerX.equalTo(self)
+//            make.leading.trailing.greaterThanOrEqualTo(self).inset(40)
+//            make.width.lessThanOrEqualTo(300).priority(900)
+//        }
+        self.titleLabel.addConstraint(NSLayoutConstraint(item: self.titleLabel,
+                                                            attribute: .centerX,
+                                                            relatedBy: .equal,
+                                                            toItem: self,
+                                                            attribute: .centerX,
+                                                            multiplier: 1.0,
+                                                            constant: 0.0))
+        self.titleLabel.addConstraint(NSLayoutConstraint(item: self.titleLabel,
+                                                            attribute: .leading,
+                                                            relatedBy: .greaterThanOrEqual,
+                                                            toItem: self,
+                                                            attribute: .leading,
+                                                            multiplier: 1.0,
+                                                            constant: 40.0))
+        self.titleLabel.addConstraint(NSLayoutConstraint(item: self.titleLabel,
+                                                            attribute: .trailing,
+                                                            relatedBy: .lessThanOrEqual,
+                                                            toItem: self,
+                                                            attribute: .trailing,
+                                                            multiplier: 1.0,
+                                                            constant: -40.0))
+        let widthConstraint = NSLayoutConstraint(item: self.titleLabel,
+                                                 attribute: .width,
+                                                 relatedBy: .lessThanOrEqual,
+                                                 toItem: nil,
+                                                 attribute: .notAnAttribute,
+                                                 multiplier: 1.0,
+                                                 constant: 300.0)
+        widthConstraint.priority = UILayoutPriority.defaultHigh
+        self.titleLabel.addConstraint(widthConstraint)
         
         self.messageLabel.translatesAutoresizingMaskIntoConstraints = false
         //self.messageLabel.textColor = Appearance.regularTextColor
@@ -117,11 +221,33 @@ enum StatusViewState {
         self.messageLabel.numberOfLines = 0
         self.messageLabel.textAlignment = .center
         self.addSubview(messageLabel)
-        self.messageLabel.snp.makeConstraints { (make) in
-            make.centerX.equalTo(self)
-            make.leading.trailing.greaterThanOrEqualTo(self).inset(40)
-            make.width.lessThanOrEqualTo(300).priority(900)
-        }
+        
+//        self.messageLabel.snp.makeConstraints { (make) in
+//            make.centerX.equalTo(self)
+//            make.leading.trailing.greaterThanOrEqualTo(self).inset(40)
+//            make.width.lessThanOrEqualTo(300).priority(900)
+//        }
+        self.messageLabel.addConstraint(NSLayoutConstraint(item: self.messageLabel,
+                                                      attribute: .centerX,
+                                                      relatedBy: .equal,
+                                                      toItem: self,
+                                                      attribute: .centerX,
+                                                      multiplier: 1.0,
+                                                      constant: 0.0))
+        self.messageLabel.addConstraint(NSLayoutConstraint(item: self.messageLabel,
+                                                            attribute: .leading,
+                                                            relatedBy: .greaterThanOrEqual,
+                                                            toItem: self,
+                                                            attribute: .leading,
+                                                            multiplier: 1.0,
+                                                            constant: 40.0))
+        self.messageLabel.addConstraint(NSLayoutConstraint(item: self.messageLabel,
+                                                            attribute: .trailing,
+                                                            relatedBy: .lessThanOrEqual,
+                                                            toItem: self,
+                                                            attribute: .trailing,
+                                                            multiplier: 1.0,
+                                                            constant: -40.0))
     }
     
     override public func didMoveToSuperview() {
@@ -151,7 +277,11 @@ enum StatusViewState {
     ///   - statusImage: image shown at the top of view
     ///   - buttonImage: image shown in button
     ///   - animate: animate the transition
-    func changeTo(state: StatusViewState, title: String? = nil, message: String? = nil, statusImage: UIImage? = nil, buttonImage: UIImage? = nil, animate: Bool = true ) {
+   public func changeTo(state: StatusViewState, title: String? = nil, message: String? = nil, statusImage: UIImage? = nil, buttonImage: UIImage? = nil, animate: Bool = true ) throws {
+        
+        guard let loadingView = self.loadingView else {
+            throw StatusViewError.notInitialisedCorrectly
+        }
         
         if state == self.state && message == self.messageLabel.text && title == self.titleLabel.text {
             // No change
@@ -160,7 +290,7 @@ enum StatusViewState {
         
         let views = [
             "image": self.statusImageView,
-            "loading": self.loadingView,
+            "loading": loadingView,
             "title": self.titleLabel,
             "message": self.messageLabel,
             "button": self.button
@@ -203,9 +333,9 @@ enum StatusViewState {
             
             if self.state == .loading {
                 layoutComponents.append("[loading]-20")
-                visibleViews.append(self.loadingView)
+                visibleViews.append(loadingView)
                 
-                self.layoutConstraints.append(NSLayoutConstraint(item: self.loadingView,
+                self.layoutConstraints.append(NSLayoutConstraint(item: loadingView,
                                                                  attribute: .centerY,
                                                                  relatedBy: .equal,
                                                                  toItem: self,
@@ -214,7 +344,7 @@ enum StatusViewState {
                                                                  constant: 0.0))
                 
             } else {
-                hiddenViews.append(self.loadingView)
+                hiddenViews.append(loadingView)
                 
                 self.layoutConstraints.append(NSLayoutConstraint(item: self.titleLabel,
                                                                  attribute: .centerY,
@@ -225,7 +355,7 @@ enum StatusViewState {
                                                                  constant: 0.0))
                 
                 if let _ = statusImage {
-                    self.layoutConstraints.append(NSLayoutConstraint(item: self.loadingView,
+                    self.layoutConstraints.append(NSLayoutConstraint(item: loadingView,
                                                                      attribute: .centerY,
                                                                      relatedBy: .equal,
                                                                      toItem: self.statusImageView,
