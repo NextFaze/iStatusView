@@ -37,29 +37,35 @@ extension StatusViewError: LocalizedError {
 
 @objc public class StatusView: UIView {
     
+    /// Appearance proxy property for setting the title label text color
     @objc public dynamic var titleLabelTextColor: UIColor? {
         get { return self.titleLabel.textColor }
         set { self.titleLabel.textColor = newValue }
     }
     
+    /// Appearance proxy property for setting the title label font
     @objc public dynamic var titleLabelFont: UIFont? {
         get { return self.titleLabel.font }
         set { self.titleLabel.font = newValue }
     }
     
+    /// Appearance proxy property for setting the message label text color
     @objc public dynamic var messageLabelTextColor: UIColor? {
         get { return self.messageLabel.textColor }
         set { self.messageLabel.textColor = newValue }
     }
     
+    /// Appearance proxy property for setting the message label font
     @objc public dynamic var messageLabelFont: UIFont? {
         get { return self.messageLabel.font }
         set { self.messageLabel.font = newValue }
     }
     
     
-    private(set) var state = StatusViewState.hidden
+    /// State of the StatusView
+    public private(set) var state = StatusViewState.hidden
     
+    /// The loading view, which is shown when state is `.loading`
     public var loadingView: UIView? {
         didSet {
             guard let loadingView = self.loadingView else{
@@ -80,12 +86,20 @@ extension StatusViewError: LocalizedError {
         }
     }
     
-    public var button = UIButton()
-    public var titleLabel = UILabel()
-    public var messageLabel = UILabel()
-    public var statusImageView = UIImageView()
+    public let button = UIButton()
+    public let titleLabel = UILabel()
+    public let messageLabel = UILabel()
+    public let statusImageView = UIImageView()
+    
     private var initial = true
     
+    /// Create
+    /// Use this to setup the StatusView
+    ///
+    /// - Parameters:
+    ///   - loadingView: pass the loading view to be shown during loading state
+    ///   - view: parent view to be added to
+    /// - Returns: a configured StatusView
     public static func create(with loadingView: UIView? = nil, addTo view: UIView) -> StatusView {
         let statusView = StatusView()
         view.addSubview(statusView)
@@ -231,22 +245,17 @@ extension StatusViewError: LocalizedError {
     
     var layoutConstraints = [NSLayoutConstraint]()
     
-    /// The current state of the status view
-    var currentState: StatusViewState {
-        return self.state
-    }
-    
     /// Show or hide status view with the following paramaters, animates where appropriate
     /// If any paramater is unset, that component will not show
     /// Before use view will need to be added to a superview and layout constraints set
     ///
     /// - Parameters:
     ///   - state: to be set to
-    ///   - title: label text
-    ///   - message: label text
+    ///   - title: text to be set as predominant text
+    ///   - message: text to be set as the more detailed text
     ///   - statusImage: image shown at the top of view
-    ///   - buttonImage: image shown in button
-    ///   - animate: animate the transition
+    ///   - buttonImage: image shown in button, also enabling the button
+    ///   - animate: true to animate the transition between states
    public func changeTo(state: StatusViewState, title: String? = nil, message: String? = nil, statusImage: UIImage? = nil, buttonImage: UIImage? = nil, animate: Bool = true ) throws {
         
         guard let loadingView = self.loadingView else {
