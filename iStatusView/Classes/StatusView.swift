@@ -13,12 +13,12 @@ import UIKit
  
  - hidden: status view is hidden
  - loading: status view showing loading
- - error: status view showing error
+ - message: status view showing message (e.g. an error)
  */
 public enum StatusViewState {
     case hidden
     case loading
-    case error
+    case message
 }
 
 public enum StatusViewError: Error {
@@ -37,24 +37,24 @@ extension StatusViewError: LocalizedError {
 
 @objc public class StatusView: UIView {
     
-    @objc dynamic var titleLabelTextColor: UIColor? {
+    @objc public dynamic var titleLabelTextColor: UIColor? {
         get { return self.titleLabel.textColor }
         set { self.titleLabel.textColor = newValue }
     }
     
-    @objc dynamic var titleLabelFont: UIFont? {
+    @objc public dynamic var titleLabelFont: UIFont? {
         get { return self.titleLabel.font }
         set { self.titleLabel.font = newValue }
     }
     
-    @objc dynamic var messageLabelTextColor: UIColor? {
+    @objc public dynamic var messageLabelTextColor: UIColor? {
         get { return self.messageLabel.textColor }
         set { self.messageLabel.textColor = newValue }
     }
     
-    @objc dynamic var messageLabelFont: UIFont? {
-        get { return self.titleLabel.font }
-        set { self.titleLabel.font = newValue }
+    @objc public dynamic var messageLabelFont: UIFont? {
+        get { return self.messageLabel.font }
+        set { self.messageLabel.font = newValue }
     }
     
     
@@ -67,24 +67,16 @@ extension StatusViewError: LocalizedError {
             }
             
             loadingView.translatesAutoresizingMaskIntoConstraints = false
-            //        self.loadingView.strokeColor = Appearance.importantTextColor;
-            //        self.loadingView.strokeThickness = 4
-            //        self.loadingView.radius = 30
             loadingView.clipsToBounds = true
             addSubview(loadingView)
-            
-            //        self.loadingView.snp.makeConstraints { (make) in
-            //            make.width.equalTo(self.loadingView.radius * 2 + self.loadingView.strokeThickness)
-            //            make.height.equalTo(self.loadingView.radius * 2 + self.loadingView.strokeThickness)
-            //            make.centerX.equalTo(self)
-            //        }
-            loadingView.addConstraint(NSLayoutConstraint(item: loadingView,
-                                                         attribute: .centerX,
-                                                         relatedBy: .equal,
-                                                         toItem: self,
-                                                         attribute: .centerX,
-                                                         multiplier: 1.0,
-                                                         constant: 0.0))
+
+            self.addConstraint(NSLayoutConstraint(item: loadingView,
+                                                  attribute: .centerX,
+                                                  relatedBy: .equal,
+                                                  toItem: self,
+                                                  attribute: .centerX,
+                                                  multiplier: 1.0,
+                                                  constant: 0.0))
         }
     }
     
@@ -96,8 +88,9 @@ extension StatusViewError: LocalizedError {
     
     public static func create(with loadingView: UIView? = nil, addTo view: UIView) -> StatusView {
         let statusView = StatusView()
-        statusView.setup()
         view.addSubview(statusView)
+        statusView.loadingView = loadingView
+        statusView.setup()
         return statusView
     }
     
@@ -116,95 +109,79 @@ extension StatusViewError: LocalizedError {
         self.statusImageView.contentMode = .scaleAspectFit
         self.addSubview(self.statusImageView)
         
-//        self.statusImageView.snp.makeConstraints { (make) in
-//            make.centerX.equalTo(self)
-//            make.leading.trailing.greaterThanOrEqualTo(self).inset(40)
-//        }
-//
-        self.statusImageView.addConstraint(NSLayoutConstraint(item: self.statusImageView,
-                                                               attribute: .centerX,
-                                                               relatedBy: .equal,
-                                                               toItem: self,
-                                                               attribute: .centerX,
-                                                               multiplier: 1.0,
-                                                               constant: 0.0))
-        self.statusImageView.addConstraint(NSLayoutConstraint(item: self.statusImageView,
-                                                               attribute: .leading,
-                                                               relatedBy: .equal,
-                                                               toItem: self,
-                                                               attribute: .leading,
-                                                               multiplier: 1.0,
-                                                               constant: 40.0))
-        self.statusImageView.addConstraint(NSLayoutConstraint(item: self.statusImageView,
-                                                               attribute: .trailing,
-                                                               relatedBy: .greaterThanOrEqual,
-                                                               toItem: self,
-                                                               attribute: .trailing,
-                                                               multiplier: 1.0,
-                                                               constant: -40.0))
+        self.addConstraint(NSLayoutConstraint(item: self.statusImageView,
+                                              attribute: .centerX,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .centerX,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        self.addConstraint(NSLayoutConstraint(item: self.statusImageView,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .leading,
+                                              multiplier: 1.0,
+                                              constant: 40.0))
+        self.addConstraint(NSLayoutConstraint(item: self.statusImageView,
+                                              attribute: .trailing,
+                                              relatedBy: .greaterThanOrEqual,
+                                              toItem: self,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: -40.0))
         
         self.button.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(self.button)
         
-//        self.button.snp.makeConstraints { (make) in
-//            make.centerX.equalTo(self)
-//            make.leading.trailing.greaterThanOrEqualTo(self).inset(40)
-//        }
-        self.button.addConstraint(NSLayoutConstraint(item: self.button,
-                                                      attribute: .centerX,
-                                                      relatedBy: .equal,
-                                                      toItem: self,
-                                                      attribute: .centerX,
-                                                      multiplier: 1.0,
-                                                      constant: 0.0))
-        self.button.addConstraint(NSLayoutConstraint(item: self.button,
-                                                      attribute: .leading,
-                                                      relatedBy: .greaterThanOrEqual,
-                                                      toItem: self,
-                                                      attribute: .leading,
-                                                      multiplier: 1.0,
-                                                      constant: 0.0))
-        self.button.addConstraint(NSLayoutConstraint(item: self.button,
-                                                      attribute: .trailing,
-                                                      relatedBy: .greaterThanOrEqual,
-                                                      toItem: self,
-                                                      attribute: .trailing,
-                                                      multiplier: 1.0,
-                                                      constant: 0.0))
+        self.addConstraint(NSLayoutConstraint(item: self.button,
+                                              attribute: .centerX,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .centerX,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        self.addConstraint(NSLayoutConstraint(item: self.button,
+                                              attribute: .leading,
+                                              relatedBy: .greaterThanOrEqual,
+                                              toItem: self,
+                                              attribute: .leading,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        self.addConstraint(NSLayoutConstraint(item: self.button,
+                                              attribute: .trailing,
+                                              relatedBy: .greaterThanOrEqual,
+                                              toItem: self,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
         
         self.titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        //self.titleLabel.textColor = Appearance.importantTextColor
-        //self.titleLabel.font = Appearance.fontBold(ofSize: 15)
         self.titleLabel.numberOfLines = 0
         self.titleLabel.textAlignment = .center
         self.addSubview(self.titleLabel)
         
-//        self.titleLabel.snp.makeConstraints { (make) in
-//            make.centerX.equalTo(self)
-//            make.leading.trailing.greaterThanOrEqualTo(self).inset(40)
-//            make.width.lessThanOrEqualTo(300).priority(900)
-//        }
-        self.titleLabel.addConstraint(NSLayoutConstraint(item: self.titleLabel,
-                                                            attribute: .centerX,
-                                                            relatedBy: .equal,
-                                                            toItem: self,
-                                                            attribute: .centerX,
-                                                            multiplier: 1.0,
-                                                            constant: 0.0))
-        self.titleLabel.addConstraint(NSLayoutConstraint(item: self.titleLabel,
-                                                            attribute: .leading,
-                                                            relatedBy: .greaterThanOrEqual,
-                                                            toItem: self,
-                                                            attribute: .leading,
-                                                            multiplier: 1.0,
-                                                            constant: 40.0))
-        self.titleLabel.addConstraint(NSLayoutConstraint(item: self.titleLabel,
-                                                            attribute: .trailing,
-                                                            relatedBy: .lessThanOrEqual,
-                                                            toItem: self,
-                                                            attribute: .trailing,
-                                                            multiplier: 1.0,
-                                                            constant: -40.0))
+        self.addConstraint(NSLayoutConstraint(item: self.titleLabel,
+                                              attribute: .centerX,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .centerX,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        self.addConstraint(NSLayoutConstraint(item: self.titleLabel,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .leading,
+                                              multiplier: 1.0,
+                                              constant: 40.0))
+        self.addConstraint(NSLayoutConstraint(item: self.titleLabel,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: -40.0))
         let widthConstraint = NSLayoutConstraint(item: self.titleLabel,
                                                  attribute: .width,
                                                  relatedBy: .lessThanOrEqual,
@@ -213,41 +190,34 @@ extension StatusViewError: LocalizedError {
                                                  multiplier: 1.0,
                                                  constant: 300.0)
         widthConstraint.priority = UILayoutPriority.defaultHigh
-        self.titleLabel.addConstraint(widthConstraint)
+        self.addConstraint(widthConstraint)
         
         self.messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        //self.messageLabel.textColor = Appearance.regularTextColor
-        //self.messageLabel.font = Appearance.fontRegular(ofSize: 12)
         self.messageLabel.numberOfLines = 0
         self.messageLabel.textAlignment = .center
         self.addSubview(messageLabel)
         
-//        self.messageLabel.snp.makeConstraints { (make) in
-//            make.centerX.equalTo(self)
-//            make.leading.trailing.greaterThanOrEqualTo(self).inset(40)
-//            make.width.lessThanOrEqualTo(300).priority(900)
-//        }
-        self.messageLabel.addConstraint(NSLayoutConstraint(item: self.messageLabel,
-                                                      attribute: .centerX,
-                                                      relatedBy: .equal,
-                                                      toItem: self,
-                                                      attribute: .centerX,
-                                                      multiplier: 1.0,
-                                                      constant: 0.0))
-        self.messageLabel.addConstraint(NSLayoutConstraint(item: self.messageLabel,
-                                                            attribute: .leading,
-                                                            relatedBy: .greaterThanOrEqual,
-                                                            toItem: self,
-                                                            attribute: .leading,
-                                                            multiplier: 1.0,
-                                                            constant: 40.0))
-        self.messageLabel.addConstraint(NSLayoutConstraint(item: self.messageLabel,
-                                                            attribute: .trailing,
-                                                            relatedBy: .lessThanOrEqual,
-                                                            toItem: self,
-                                                            attribute: .trailing,
-                                                            multiplier: 1.0,
-                                                            constant: -40.0))
+        self.addConstraint(NSLayoutConstraint(item: self.messageLabel,
+                                              attribute: .centerX,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .centerX,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        self.addConstraint(NSLayoutConstraint(item: self.messageLabel,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .leading,
+                                              multiplier: 1.0,
+                                              constant: 40.0))
+        self.addConstraint(NSLayoutConstraint(item: self.messageLabel,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: -40.0))
     }
     
     override public func didMoveToSuperview() {
