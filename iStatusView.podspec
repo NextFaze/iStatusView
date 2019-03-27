@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'iStatusView'
-  s.version          = '0.3.0'
+  s.version          = '0.3.1'
   s.summary          = 'iStatusView is a convenient way to show loading and message status in a view.'
 
 # This description is used to generate tags and improve search results.
@@ -31,7 +31,7 @@ When an error has occured, the message can be displayed, and a rety button can b
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '9.3'
-  s.swift_version = '4.1'
+  s.swift_version = '4.2'
 
   s.source_files = 'iStatusView/Classes/**/*'
   
