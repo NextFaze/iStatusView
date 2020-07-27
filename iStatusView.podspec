@@ -26,7 +26,7 @@ When an error has occured, the message can be displayed, and a rety button can b
   s.homepage         = 'https://github.com/NextFaze/iStatusView'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'awulf' => 'awulf@pacmeb.com' }
+  s.author           = { 'awulf' => 'awulf@pacmeb.com', "sparmar" => 'sparmar@nextfaze.com' }
   s.source           = { :git => 'https://github.com/NextFaze/iStatusView.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
