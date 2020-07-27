@@ -4,39 +4,55 @@ PODS:
   - FBSnapshotTestCase/Core (2.1.4)
   - FBSnapshotTestCase/SwiftSupport (2.1.4):
     - FBSnapshotTestCase/Core
-  - iStatusView (0.1.0)
-  - Nimble (7.0.3)
-  - Nimble-Snapshots (6.3.0):
-    - Nimble-Snapshots/Core (= 6.3.0)
-  - Nimble-Snapshots/Core (6.3.0):
-    - FBSnapshotTestCase (~> 2.0)
-    - Nimble (~> 7.0)
-  - Quick (1.2.0)
-  - SnapKit (4.0.0)
+  - iOSSnapshotTestCase (6.2.0):
+    - iOSSnapshotTestCase/SwiftSupport (= 6.2.0)
+  - iOSSnapshotTestCase/Core (6.2.0)
+  - iOSSnapshotTestCase/SwiftSupport (6.2.0):
+    - iOSSnapshotTestCase/Core
+  - iStatusView (0.4.0)
+  - Nimble (8.1.1)
+  - Nimble-Snapshots (8.2.1):
+    - Nimble-Snapshots/Core (= 8.2.1)
+  - Nimble-Snapshots/Core (8.2.1):
+    - iOSSnapshotTestCase (~> 6.0)
+    - Nimble (~> 8.0)
+  - Quick (3.0.0)
+  - SnapKit (5.0.1)
   - SVProgressHUD (2.2.5)
 
 DEPENDENCIES:
   - FBSnapshotTestCase (~> 2.1.4)
   - iStatusView (from `../`)
-  - Nimble (~> 7.0.2)
-  - Nimble-Snapshots (~> 6.3.0)
-  - Quick (~> 1.2.0)
+  - Nimble (~> 8.0)
+  - Nimble-Snapshots (~> 8.2)
+  - Quick (~> 3.0)
   - SnapKit
   - SVProgressHUD
 
+SPEC REPOS:
+  trunk:
+    - FBSnapshotTestCase
+    - iOSSnapshotTestCase
+    - Nimble
+    - Nimble-Snapshots
+    - Quick
+    - SnapKit
+    - SVProgressHUD
+
 EXTERNAL SOURCES:
   iStatusView:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
-  iStatusView: d1f42102af994e95695d0898eede58464aa1f1b5
-  Nimble: 7f5a9c447a33002645a071bddafbfb24ea70e0ac
-  Nimble-Snapshots: f5459b5b091678dc942d03ec4741cacb58ba4a52
-  Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08
-  SnapKit: a42d492c16e80209130a3379f73596c3454b7694
+  iOSSnapshotTestCase: 9ab44cb5aa62b84d31847f40680112e15ec579a6
+  iStatusView: 6814dde50423d68fb1755408c9616c5f0229e758
+  Nimble: 5f8a2fb6fa343a7242dfdd9d42f7267419d464b2
+  Nimble-Snapshots: 3a4750d83752625c8ebfdc588da105303ee2201e
+  Quick: 6d9559f40647bc4d510103842ef2fdd882d753e2
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
 
-PODFILE CHECKSUM: 8bd0d7f41a3de3822c59388a6836b9ce9afa4d73
+PODFILE CHECKSUM: eeb5fc88f8168260d028ee9d3aeee0199038d0b0
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.9.3
