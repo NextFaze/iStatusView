@@ -4,33 +4,33 @@ PODS:
   - FBSnapshotTestCase/Core (2.1.4)
   - FBSnapshotTestCase/SwiftSupport (2.1.4):
     - FBSnapshotTestCase/Core
-  - iOSSnapshotTestCase (6.2.0):
-    - iOSSnapshotTestCase/SwiftSupport (= 6.2.0)
-  - iOSSnapshotTestCase/Core (6.2.0)
-  - iOSSnapshotTestCase/SwiftSupport (6.2.0):
+  - iOSSnapshotTestCase (6.0.2):
+    - iOSSnapshotTestCase/SwiftSupport (= 6.0.2)
+  - iOSSnapshotTestCase/Core (6.0.2)
+  - iOSSnapshotTestCase/SwiftSupport (6.0.2):
     - iOSSnapshotTestCase/Core
-  - iStatusView (0.4.0)
-  - Nimble (8.1.1)
-  - Nimble-Snapshots (8.2.1):
-    - Nimble-Snapshots/Core (= 8.2.1)
-  - Nimble-Snapshots/Core (8.2.1):
+  - iStatusView (0.3.1)
+  - Nimble (8.0.1)
+  - Nimble-Snapshots (7.0.0):
+    - Nimble-Snapshots/Core (= 7.0.0)
+  - Nimble-Snapshots/Core (7.0.0):
     - iOSSnapshotTestCase (~> 6.0)
     - Nimble (~> 8.0)
-  - Quick (3.0.0)
-  - SnapKit (5.0.1)
+  - Quick (1.2.0)
+  - SnapKit (4.2.0)
   - SVProgressHUD (2.2.5)
 
 DEPENDENCIES:
   - FBSnapshotTestCase (~> 2.1.4)
   - iStatusView (from `../`)
   - Nimble (~> 8.0)
-  - Nimble-Snapshots (~> 8.2)
-  - Quick (~> 3.0)
+  - Nimble-Snapshots (~> 7.0)
+  - Quick (~> 1.2.0)
   - SnapKit
   - SVProgressHUD
 
 SPEC REPOS:
-  trunk:
+  https://github.com/cocoapods/specs.git:
     - FBSnapshotTestCase
     - iOSSnapshotTestCase
     - Nimble
@@ -45,14 +45,14 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
-  iOSSnapshotTestCase: 9ab44cb5aa62b84d31847f40680112e15ec579a6
-  iStatusView: 6814dde50423d68fb1755408c9616c5f0229e758
-  Nimble: 5f8a2fb6fa343a7242dfdd9d42f7267419d464b2
-  Nimble-Snapshots: 3a4750d83752625c8ebfdc588da105303ee2201e
-  Quick: 6d9559f40647bc4d510103842ef2fdd882d753e2
-  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  iOSSnapshotTestCase: 20083a7be9b8ef742610e16c79f15ad829441f29
+  iStatusView: 4b774171417a9636a8d2e3a0ada6575fec647d59
+  Nimble: 45f786ae66faa9a709624227fae502db55a8bdd0
+  Nimble-Snapshots: 2d6d712ceb2d1850d88f850fbd7c732618106022
+  Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08
+  SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
 
-PODFILE CHECKSUM: eeb5fc88f8168260d028ee9d3aeee0199038d0b0
+PODFILE CHECKSUM: d5321adb1d9cb08c8c51a7a80181f20b1131ee59
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.6.0

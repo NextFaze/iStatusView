@@ -1,3 +1,4 @@
+platform :ios, '10.0'
 use_frameworks!
 
 target 'iStatusView_Example' do
@@ -8,9 +9,9 @@ target 'iStatusView_Example' do
   target 'iStatusView_Tests' do
     inherit! :search_paths
 
-    pod 'Quick', '~> 3.0'
+    pod 'Quick', '~> 1.2.0'
     pod 'Nimble', '~> 8.0'
     pod 'FBSnapshotTestCase' , '~> 2.1.4'
-    pod 'Nimble-Snapshots' , '~> 8.2'
+    pod 'Nimble-Snapshots' , '~> 7.0'
   end
 end
