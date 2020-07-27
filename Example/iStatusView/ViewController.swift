@@ -148,7 +148,7 @@ class ViewController: UIViewController {
         button.setTitleColor(UIColor.black, for: .normal)
         button.layer.cornerRadius = 4.0
         button.layer.borderWidth = 1.0
-        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
+        button.contentEdgeInsets = UIEdgeInsets.init(top: 5, left: 10, bottom: 5, right: 10)
         button.backgroundColor = UIColor.white
         button.addTarget(self, action: #selector(statusViewButtonPressed), for: .touchUpInside)
         self.view.addSubview(button)
