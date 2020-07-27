@@ -281,7 +281,7 @@ extension StatusViewError: LocalizedError {
         self.state = state
         
         if !self.isHidden {
-            self.superview?.bringSubview(toFront: self)
+            self.superview?.bringSubviewToFront(self)
         }
         
         var visibleViews = [UIView]()
@@ -379,7 +379,7 @@ extension StatusViewError: LocalizedError {
         }
         
         if initial == false || animate == false {
-            UIView.animate(withDuration: 0.32, delay: 0.0, options:UIViewAnimationOptions.curveEaseOut, animations: {
+            UIView.animate(withDuration: 0.32, delay: 0.0, options:UIView.AnimationOptions.curveEaseOut, animations: {
                 // Don't animate contents if showing/hiding
                 if !wasHidden {
                     self.layoutIfNeeded()
