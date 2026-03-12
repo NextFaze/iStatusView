@@ -121,7 +121,7 @@ class ViewController: UIViewController {
                                           message: NSLocalizedString("More details here", comment: ""),
                                           statusImage: nil,
                                           buttonImage: nil,
-                                          animate: false)
+                                          animate: true)
         }))
 
         statesSheet.addAction(UIAlertAction(title: NSLocalizedString("Set to Success", comment: "action item"), style: .default, handler: { (_) in
@@ -131,7 +131,7 @@ class ViewController: UIViewController {
                                           message: NSLocalizedString("Everything loaded correctly.", comment: ""),
                                           statusImage: self.makeSymbolImage(.success),
                                           buttonImage: nil,
-                                          animate: false)
+                                          animate: true)
         }))
         
         statesSheet.addAction(UIAlertAction(title: NSLocalizedString("Set to Error", comment: "action item"), style: .default, handler: { (_) in
@@ -141,7 +141,7 @@ class ViewController: UIViewController {
                                           message: NSLocalizedString("Choose another state to change to remove this error ", comment: ""),
                                           statusImage: self.makeSymbolImage(.error),
                                           buttonImage: self.makeSymbolImage(.reload),
-                                          animate: false)
+                                          animate: true)
         }))
         
         statesSheet.addAction(UIAlertAction(title: NSLocalizedString("Set to Warning", comment: "action item"), style: .default, handler: { (_) in
@@ -151,7 +151,7 @@ class ViewController: UIViewController {
                                           message: nil,
                                           statusImage: self.makeSymbolImage(.warning),
                                           buttonImage: nil,
-                                          animate: false)
+                                          animate: true)
         }))
         
         statesSheet.addAction(UIAlertAction(title: NSLocalizedString("Set to Hidden", comment: "action item"), style: .default, handler: { (_) in
@@ -161,7 +161,7 @@ class ViewController: UIViewController {
                                           message: nil,
                                           statusImage: nil,
                                           buttonImage: nil,
-                                          animate: false)
+                                          animate: true)
         }))
         
         statesSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "action item"), style: .cancel, handler: nil))
@@ -176,7 +176,7 @@ class ViewController: UIViewController {
                                       message: nil,
                                       statusImage: nil,
                                       buttonImage: nil,
-                                      animate: false)
+                                      animate: true)
     }
 
     private func makeLoadingView() -> UIView {

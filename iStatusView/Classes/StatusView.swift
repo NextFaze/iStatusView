@@ -73,21 +73,7 @@ extension StatusViewError: LocalizedError {
     /// The loading view, which is shown when state is `.loading`
     public var loadingView: UIView? {
         didSet {
-            guard let loadingView = self.loadingView else{
-                return
-            }
-            
-            loadingView.translatesAutoresizingMaskIntoConstraints = false
-            loadingView.clipsToBounds = true
-            addSubview(loadingView)
-
-            self.addConstraint(NSLayoutConstraint(item: loadingView,
-                                                  attribute: .centerX,
-                                                  relatedBy: .equal,
-                                                  toItem: self,
-                                                  attribute: .centerX,
-                                                  multiplier: 1.0,
-                                                  constant: 0.0))
+            self.updateLoadingView(from: oldValue, to: self.loadingView)
         }
     }
     
@@ -95,6 +81,10 @@ extension StatusViewError: LocalizedError {
     public let titleLabel = UILabel()
     public let messageLabel = UILabel()
     public let statusImageView = UIImageView()
+    
+    private let contentStackView = UIStackView()
+    private let loadingPlaceholderView = UIView()
+    private let textStackView = UIStackView()
     
     private var initial = true
     
@@ -125,118 +115,58 @@ extension StatusViewError: LocalizedError {
     func setup() {
         self.statusImageView.translatesAutoresizingMaskIntoConstraints = false
         self.statusImageView.contentMode = .scaleAspectFit
-        self.addSubview(self.statusImageView)
-        
-        self.addConstraint(NSLayoutConstraint(item: self.statusImageView,
-                                              attribute: .centerX,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .centerX,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-        self.addConstraint(NSLayoutConstraint(item: self.statusImageView,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 40.0))
-        self.addConstraint(NSLayoutConstraint(item: self.statusImageView,
-                                              attribute: .trailing,
-                                              relatedBy: .greaterThanOrEqual,
-                                              toItem: self,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: -40.0))
         
         self.button.translatesAutoresizingMaskIntoConstraints = false
         self.button.imageView?.contentMode = .scaleAspectFit
-        self.addSubview(self.button)
-        
-        self.addConstraint(NSLayoutConstraint(item: self.button,
-                                              attribute: .centerX,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .centerX,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-        self.addConstraint(NSLayoutConstraint(item: self.button,
-                                              attribute: .leading,
-                                              relatedBy: .greaterThanOrEqual,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-        self.addConstraint(NSLayoutConstraint(item: self.button,
-                                              attribute: .trailing,
-                                              relatedBy: .greaterThanOrEqual,
-                                              toItem: self,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
         
         self.titleLabel.translatesAutoresizingMaskIntoConstraints = false
         self.titleLabel.numberOfLines = 0
         self.titleLabel.textAlignment = .center
-        self.addSubview(self.titleLabel)
-        
-        self.addConstraint(NSLayoutConstraint(item: self.titleLabel,
-                                              attribute: .centerX,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .centerX,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-        self.addConstraint(NSLayoutConstraint(item: self.titleLabel,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 40.0))
-        self.addConstraint(NSLayoutConstraint(item: self.titleLabel,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: -40.0))
-        let widthConstraint = NSLayoutConstraint(item: self.titleLabel,
-                                                 attribute: .width,
-                                                 relatedBy: .lessThanOrEqual,
-                                                 toItem: nil,
-                                                 attribute: .notAnAttribute,
-                                                 multiplier: 1.0,
-                                                 constant: 300.0)
-        widthConstraint.priority = UILayoutPriority.defaultHigh
-        self.addConstraint(widthConstraint)
         
         self.messageLabel.translatesAutoresizingMaskIntoConstraints = false
         self.messageLabel.numberOfLines = 0
         self.messageLabel.textAlignment = .center
-        self.addSubview(messageLabel)
         
-        self.addConstraint(NSLayoutConstraint(item: self.messageLabel,
-                                              attribute: .centerX,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .centerX,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-        self.addConstraint(NSLayoutConstraint(item: self.messageLabel,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 40.0))
-        self.addConstraint(NSLayoutConstraint(item: self.messageLabel,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: -40.0))
+        self.loadingPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
+        self.loadingPlaceholderView.isHidden = true
+        
+        self.textStackView.translatesAutoresizingMaskIntoConstraints = false
+        self.textStackView.axis = .vertical
+        self.textStackView.alignment = .fill
+        self.textStackView.spacing = 2.0
+        self.textStackView.addArrangedSubview(self.titleLabel)
+        self.textStackView.addArrangedSubview(self.messageLabel)
+        
+        self.contentStackView.translatesAutoresizingMaskIntoConstraints = false
+        self.contentStackView.axis = .vertical
+        self.contentStackView.alignment = .center
+        self.contentStackView.spacing = 20.0
+        self.contentStackView.addArrangedSubview(self.statusImageView)
+        self.contentStackView.addArrangedSubview(self.loadingPlaceholderView)
+        self.contentStackView.addArrangedSubview(self.textStackView)
+        self.contentStackView.addArrangedSubview(self.button)
+        self.addSubview(self.contentStackView)
+        
+        NSLayoutConstraint.activate([
+            self.contentStackView.centerXAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor),
+            self.contentStackView.centerYAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerYAnchor),
+            self.contentStackView.topAnchor.constraint(greaterThanOrEqualTo: self.safeAreaLayoutGuide.topAnchor),
+            self.contentStackView.bottomAnchor.constraint(lessThanOrEqualTo: self.safeAreaLayoutGuide.bottomAnchor),
+            self.contentStackView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor),
+            self.contentStackView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor)
+        ])
+        
+        let maxTextWidth = 300.0
+        let textMaxWidthConstraint = self.textStackView.widthAnchor.constraint(lessThanOrEqualToConstant: maxTextWidth)
+        textMaxWidthConstraint.priority = UILayoutPriority.required
+        textMaxWidthConstraint.isActive = true
+        
+        // This needs to be constant width for animation to not glitch out
+        let titleWidthConstraint = self.textStackView.widthAnchor.constraint(equalToConstant: maxTextWidth)
+        titleWidthConstraint.priority = UILayoutPriority.defaultHigh
+        titleWidthConstraint.isActive = true
+        
+        self.applyVisibility(for: self.state)
     }
     
     override public func didMoveToSuperview() {
@@ -247,8 +177,6 @@ extension StatusViewError: LocalizedError {
             self.isHidden = true
         }
     }
-    
-    var layoutConstraints = [NSLayoutConstraint]()
     
     /// Show or hide status view with the following paramaters, animates where appropriate
     /// If any paramater is unset, that component will not show
@@ -263,7 +191,7 @@ extension StatusViewError: LocalizedError {
     ///   - animate: true to animate the transition between states
    public func changeTo(state: StatusViewState, title: String? = nil, message: String? = nil, statusImage: UIImage? = nil, buttonImage: UIImage? = nil, animate: Bool = true ) throws {
         
-        guard let loadingView = self.loadingView else {
+        guard self.loadingView != nil else {
             throw StatusViewError.notInitialisedCorrectly
         }
         
@@ -272,32 +200,14 @@ extension StatusViewError: LocalizedError {
             return;
         }
         
-        let views = [
-            "image": self.statusImageView,
-            "loading": loadingView,
-            "title": self.titleLabel,
-            "message": self.messageLabel,
-            "button": self.button
-            ] as [String : Any]
-        
-        
-        let wasHidden = self.isHidden
-        
         self.state = state
         
         if !self.isHidden {
             self.superview?.bringSubviewToFront(self)
         }
         
-        var visibleViews = [UIView]()
-        var hiddenViews = [UIView]()
-        
         if state != .hidden {
             // If the state is hidden don't change contents, so that it all fades out
-            
-            NSLayoutConstraint.deactivate(self.layoutConstraints)
-            self.layoutConstraints.removeAll()
-            
             self.titleLabel.text = title
             self.messageLabel.text = message
             self.statusImageView.image = statusImage
@@ -305,134 +215,82 @@ extension StatusViewError: LocalizedError {
             var configuration = self.button.configuration
             configuration?.image = buttonImage
             self.button.configuration = configuration
-            
-            var layoutComponents = [String]()
-            var hiddenComponents = [String]()
-            
-            // Always append (for animation purposes)
-            if let _ = statusImage {
-                layoutComponents.append("[image]-20")
-                visibleViews.append(self.statusImageView)
-            } else {
-                hiddenComponents.append("[image]-20")
-                hiddenViews.append(self.statusImageView)
-            }
-            
-            if self.state == .loading {
-                layoutComponents.append("[loading]-20")
-                visibleViews.append(loadingView)
-                
-                self.layoutConstraints.append(NSLayoutConstraint(item: loadingView,
-                                                                 attribute: .centerY,
-                                                                 relatedBy: .equal,
-                                                                 toItem: self,
-                                                                 attribute: .centerY,
-                                                                 multiplier: 0.85,
-                                                                 constant: 0.0))
-                
-            } else {
-                hiddenViews.append(loadingView)
-                
-                self.layoutConstraints.append(NSLayoutConstraint(item: self.titleLabel,
-                                                                 attribute: .centerY,
-                                                                 relatedBy: .equal,
-                                                                 toItem: self,
-                                                                 attribute: .centerY,
-                                                                 multiplier: 1.0,
-                                                                 constant: 0.0))
-                
-                if let _ = statusImage {
-                    self.layoutConstraints.append(NSLayoutConstraint(item: loadingView,
-                                                                     attribute: .centerY,
-                                                                     relatedBy: .equal,
-                                                                     toItem: self.statusImageView,
-                                                                     attribute: .centerY,
-                                                                     multiplier: 1.0,
-                                                                     constant: 0.0))
-                } else {
-                    hiddenComponents.append("[loading]")
-                }
-            }
-            
-            // Title always in layout
-            layoutComponents.append("[title]")
-            hiddenComponents.append("[title]")
-            
-            if !(self.messageLabel.text ?? "").isEmpty {
-                layoutComponents.append("[message]")
-                visibleViews.append(self.messageLabel)
-            } else {
-                hiddenComponents.append("[message]")
-                hiddenViews.append(self.messageLabel)
-            }
-            
-            if let _ = buttonImage {
-                layoutComponents.append("20-[button]")
-                visibleViews.append(self.button)
-            } else {
-                hiddenComponents.append("[button]")
-                hiddenViews.append(self.button)
-            }
-            
-            self.layoutConstraints += NSLayoutConstraint.constraints(withVisualFormat: "V:|-(>=20@1000)-\(layoutComponents.joined(separator: "-"))-(>=20@1000)-|",
-                options: [],
-                metrics: nil,
-                views: views)
-            
-            self.layoutConstraints += NSLayoutConstraint.constraints(withVisualFormat: "V:\(hiddenComponents.joined(separator: "-"))",
-                options: [],
-                metrics: nil,
-                views: views)
-            NSLayoutConstraint.activate(self.layoutConstraints)
         }
         
-        if initial == false || animate == false {
+        let show = state != .hidden
+        let applyState = {
+            self.applyVisibility(for: state)
+            self.layoutIfNeeded()
+            self.alpha = show ? 1.0 : 0.0
+        }
+        
+        if animate {
+            if show && self.isHidden {
+                self.alpha = 0.0
+                self.isHidden = false
+            }
+            
             UIView.animate(withDuration: 0.32, delay: 0.0, options:UIView.AnimationOptions.curveEaseOut, animations: {
-                // Don't animate contents if showing/hiding
-                if !wasHidden {
-                    self.layoutIfNeeded()
-                }
-                
-                if (state == .hidden) {
-                    self.alpha = 0.0
-                } else {
-                    self.alpha = 1.0
-                    self.isHidden = false
-                }
-                
-                for view in hiddenViews {
-                    view.alpha = 0.0
-                }
-                
-                for view in visibleViews {
-                    view.alpha = 1.0
-                }
-                
+                applyState()
             }) { (finished) in
-                if (state == .hidden) {
+                if !show && !self.isHidden {
                     self.isHidden = true
                 }
             }
         } else {
-            self.layoutIfNeeded()
-            
-            if (state == .hidden) {
-                self.alpha = 0.0
-                self.isHidden = true
-            } else {
-                self.alpha = 1.0
-                self.isHidden = false
-            }
-            
-            for view in hiddenViews {
-                view.alpha = 0.0
-            }
-            
-            for view in visibleViews {
-                view.alpha = 1.0
+            applyState()
+            if self.isHidden != !show {
+                self.isHidden = !show
             }
         }
         self.initial = false
         
+    }
+    
+    private func updateLoadingView(from oldLoadingView: UIView?, to newLoadingView: UIView?) {
+        if let oldLoadingView {
+            self.contentStackView.removeArrangedSubview(oldLoadingView)
+            oldLoadingView.removeFromSuperview()
+        } else {
+            self.contentStackView.removeArrangedSubview(self.loadingPlaceholderView)
+            self.loadingPlaceholderView.removeFromSuperview()
+        }
+        
+        guard let newLoadingView else {
+            self.contentStackView.insertArrangedSubview(self.loadingPlaceholderView, at: 1)
+            self.applyVisibility(for: self.state)
+            return
+        }
+        
+        newLoadingView.translatesAutoresizingMaskIntoConstraints = false
+        newLoadingView.clipsToBounds = true
+        self.contentStackView.insertArrangedSubview(newLoadingView, at: 1)
+        self.applyVisibility(for: self.state)
+    }
+    
+    private func applyVisibility(for state: StatusViewState) {
+        let hasTitle = !(self.titleLabel.text ?? "").isEmpty
+        let hasMessage = !(self.messageLabel.text ?? "").isEmpty
+        let hasStatusImage = self.statusImageView.image != nil
+        let hasButtonImage = self.button.image(for: .normal) != nil
+        
+        self.hideView(view: self.statusImageView, hidden: !hasStatusImage, animated: true)
+        if let loadingView {
+            self.hideView(view: loadingView, hidden: state != .loading, animated: true)
+        }
+        self.hideView(view: self.titleLabel, hidden: !hasTitle, animated: true)
+        self.hideView(view: self.messageLabel, hidden: !hasMessage, animated: false)
+        self.hideView(view: self.textStackView, hidden: !(hasTitle || hasMessage), animated: true)
+        self.hideView(view: self.button, hidden: !hasButtonImage, animated: true)
+    }
+    
+    private func hideView(view: UIView, hidden: Bool, animated: Bool) {
+        if view.isHidden != hidden {
+            view.isHidden = hidden
+        }
+        view.alpha = hidden ? 0.0 : 1.0
+        if animated == false {
+            view.layer.removeAllAnimations()
+        }
     }
 }

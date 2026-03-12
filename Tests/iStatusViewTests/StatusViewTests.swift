@@ -11,7 +11,7 @@ final class StatusViewTests: XCTestCase {
         let statusView = StatusView.create(with: loadingView, addTo: parentView)
 
         XCTAssertTrue(parentView.subviews.contains(statusView))
-        XCTAssertTrue(statusView.subviews.contains(loadingView))
+        XCTAssertTrue(loadingView.isDescendant(of: statusView))
         XCTAssertTrue(statusView.loadingView === loadingView)
     }
 
