@@ -60,7 +60,12 @@ extension StatusViewError: LocalizedError {
         get { return self.messageLabel.font }
         set { self.messageLabel.font = newValue }
     }
-    
+
+    /// Appearance proxy property for setting the SF Symbol configuration used by the status image view.
+    @objc public dynamic var statusImageSymbolConfiguation: UIImage.SymbolConfiguration? {
+        get { self.statusImageView.preferredSymbolConfiguration }
+        set { self.statusImageView.preferredSymbolConfiguration = newValue }
+    }
     
     /// State of the StatusView
     public private(set) var state = StatusViewState.hidden
@@ -86,7 +91,7 @@ extension StatusViewError: LocalizedError {
         }
     }
     
-    public let button = UIButton()
+    public let button = UIButton(configuration: .plain())
     public let titleLabel = UILabel()
     public let messageLabel = UILabel()
     public let statusImageView = UIImageView()
@@ -104,7 +109,6 @@ extension StatusViewError: LocalizedError {
         let statusView = StatusView()
         view.addSubview(statusView)
         statusView.loadingView = loadingView
-        statusView.setup()
         return statusView
     }
     
@@ -146,6 +150,7 @@ extension StatusViewError: LocalizedError {
                                               constant: -40.0))
         
         self.button.translatesAutoresizingMaskIntoConstraints = false
+        self.button.imageView?.contentMode = .scaleAspectFit
         self.addSubview(self.button)
         
         self.addConstraint(NSLayoutConstraint(item: self.button,
@@ -297,6 +302,9 @@ extension StatusViewError: LocalizedError {
             self.messageLabel.text = message
             self.statusImageView.image = statusImage
             self.button.setImage(buttonImage, for: .normal)
+            var configuration = self.button.configuration
+            configuration?.image = buttonImage
+            self.button.configuration = configuration
             
             var layoutComponents = [String]()
             var hiddenComponents = [String]()

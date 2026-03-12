@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "iStatusView",
     platforms: [
-        .iOS(.v14)
+        .iOS(.v15)
     ],
     products: [
         .library(

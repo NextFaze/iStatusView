@@ -11,6 +11,38 @@ import SVProgressHUD
 import iStatusView
 
 class ViewController: UIViewController {
+    private enum DemoSymbol {
+        case error
+        case reload
+        case success
+        case warning
+
+        var systemName: String {
+            switch self {
+            case .error:
+                return "xmark.circle.fill"
+            case .reload:
+                return "arrow.counterclockwise"
+            case .success:
+                return "checkmark.circle.fill"
+            case .warning:
+                return "exclamationmark.triangle.fill"
+            }
+        }
+
+        var tintColor: UIColor {
+            switch self {
+            case .error:
+                return .systemRed
+            case .reload:
+                return .systemBlue
+            case .success:
+                return .systemGreen
+            case .warning:
+                return .systemOrange
+            }
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,12 +63,13 @@ class ViewController: UIViewController {
         // #######################
         
         // ## Step 1: Style the StatusView, using appearance proxy
-        StatusView.appearance().titleLabelTextColor = UIColor.black
-        StatusView.appearance().titleLabelFont = UIFont.boldSystemFont(ofSize: 18)
+        StatusView.appearance().titleLabelTextColor = .label
+        StatusView.appearance().titleLabelFont = .preferredFont(forTextStyle: .title3)
         
-        StatusView.appearance().messageLabelTextColor = UIColor(white: 0.2, alpha: 1.0)
-        StatusView.appearance().messageLabelFont = UIFont.systemFont(ofSize: 16)
-        StatusView.appearance().backgroundColor = UIColor.white
+        StatusView.appearance().messageLabelTextColor = .secondaryLabel
+        StatusView.appearance().messageLabelFont = .preferredFont(forTextStyle: .subheadline)
+        StatusView.appearance().backgroundColor = .systemBackground
+        StatusView.appearance().statusImageSymbolConfiguation = UIImage.SymbolConfiguration(pointSize: 80)
         
         // ## Step 2: Construct a loading view to display
         
@@ -60,6 +93,9 @@ class ViewController: UIViewController {
         // A button appears when a button image is set when setting the state
         // Useful for a retry button, or cancel loading button
         self.statusView.button.addTarget(self, action: #selector(statusViewButtonPressed), for: .touchUpInside)
+        var configuration = self.statusView.button.configuration
+        configuration?.preferredSymbolConfigurationForImage = .init(textStyle: .largeTitle)
+        self.statusView.button.configuration = configuration
         
         // ## Step 5: Show a state
         try? self.statusView.changeTo(state: .loading,
@@ -79,6 +115,7 @@ class ViewController: UIViewController {
         statesSheet.popoverPresentationController?.barButtonItem = sender
         
         statesSheet.addAction(UIAlertAction(title: NSLocalizedString("Set to Loading", comment: "action item"), style: .default, handler: { (_) in
+            self.applySymbolColors(status: nil, button: nil)
             try? self.statusView.changeTo(state: .loading,
                                           title: NSLocalizedString("Loading something new", comment: ""),
                                           message: NSLocalizedString("More details here", comment: ""),
@@ -86,26 +123,39 @@ class ViewController: UIViewController {
                                           buttonImage: nil,
                                           animate: false)
         }))
+
+        statesSheet.addAction(UIAlertAction(title: NSLocalizedString("Set to Success", comment: "action item"), style: .default, handler: { (_) in
+            self.applySymbolColors(status: .success, button: nil)
+            try? self.statusView.changeTo(state: .message,
+                                          title: NSLocalizedString("Success", comment: ""),
+                                          message: NSLocalizedString("Everything loaded correctly.", comment: ""),
+                                          statusImage: self.makeSymbolImage(.success),
+                                          buttonImage: nil,
+                                          animate: false)
+        }))
         
         statesSheet.addAction(UIAlertAction(title: NSLocalizedString("Set to Error", comment: "action item"), style: .default, handler: { (_) in
+            self.applySymbolColors(status: .error, button: .reload)
             try? self.statusView.changeTo(state: .message,
                                           title: NSLocalizedString("Something Went Wrong", comment: ""),
                                           message: NSLocalizedString("Choose another state to change to remove this error ", comment: ""),
-                                          statusImage: #imageLiteral(resourceName: "Error"),
-                                          buttonImage: #imageLiteral(resourceName: "Reload"),
+                                          statusImage: self.makeSymbolImage(.error),
+                                          buttonImage: self.makeSymbolImage(.reload),
                                           animate: false)
         }))
         
         statesSheet.addAction(UIAlertAction(title: NSLocalizedString("Set to Warning", comment: "action item"), style: .default, handler: { (_) in
+            self.applySymbolColors(status: .warning, button: nil)
             try? self.statusView.changeTo(state: .message,
                                           title: NSLocalizedString("Warning!", comment: ""),
                                           message: nil,
-                                          statusImage: #imageLiteral(resourceName: "Warning"),
+                                          statusImage: self.makeSymbolImage(.warning),
                                           buttonImage: nil,
                                           animate: false)
         }))
         
         statesSheet.addAction(UIAlertAction(title: NSLocalizedString("Set to Hidden", comment: "action item"), style: .default, handler: { (_) in
+            self.applySymbolColors(status: nil, button: nil)
             try? self.statusView.changeTo(state: .hidden,
                                           title: nil,
                                           message: nil,
@@ -120,6 +170,7 @@ class ViewController: UIViewController {
     }
     
     @objc func statusViewButtonPressed() {
+        self.applySymbolColors(status: nil, button: nil)
         try? self.statusView.changeTo(state: .loading,
                                       title: NSLocalizedString("Reloading...", comment: ""),
                                       message: nil,
@@ -147,10 +198,19 @@ class ViewController: UIViewController {
         }
 
         let loadingView = UIActivityIndicatorView(style: .large)
-        loadingView.color = UIColor.black
+        loadingView.color = .label
         loadingView.startAnimating()
         loadingView.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
         return loadingView
+    }
+
+    private func makeSymbolImage(_ symbol: DemoSymbol) -> UIImage? {
+        UIImage(systemName: symbol.systemName)
+    }
+
+    private func applySymbolColors(status: DemoSymbol?, button: DemoSymbol?) {
+        self.statusView.statusImageView.tintColor = status?.tintColor
+        self.statusView.button.tintColor = button?.tintColor
     }
     
     // MARK: - Views
@@ -158,13 +218,18 @@ class ViewController: UIViewController {
     
     lazy var statusViewHiddenButton: UIButton = {
         let button = UIButton()
+        var configuration: UIButton.Configuration
+        if #available(iOS 26.0, *) {
+            configuration = UIButton.Configuration.prominentGlass()
+        } else {
+            configuration = UIButton.Configuration.borderedProminent()
+            configuration.baseForegroundColor = .label
+        }
+        configuration.buttonSize = .large
+        configuration.baseBackgroundColor = .systemBackground
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(NSLocalizedString("Status View is Hidden: Reload", comment: "button title"), for: .normal)
-        button.setTitleColor(UIColor.black, for: .normal)
-        button.layer.cornerRadius = 4.0
-        button.layer.borderWidth = 1.0
-        button.contentEdgeInsets = UIEdgeInsets.init(top: 5, left: 10, bottom: 5, right: 10)
-        button.backgroundColor = UIColor.white
+        configuration.title = String(localized: "Status View is Hidden: Reload", comment: "button title")
+        button.configuration = configuration
         button.addTarget(self, action: #selector(statusViewButtonPressed), for: .touchUpInside)
         self.view.addSubview(button)
         return button
