@@ -2,6 +2,7 @@ import XCTest
 import UIKit
 @testable import iStatusView
 
+@MainActor
 final class StatusViewTests: XCTestCase {
     func testCreateAddsStatusViewToParentView() {
         let parentView = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
