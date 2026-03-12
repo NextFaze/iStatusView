@@ -1,0 +1,14 @@
+{
+  "originHash" : "9cc689f0f509b16d4bc5bd1b0f98820a31c59bb2b9219737a92c44712b8edde9",
+  "pins" : [
+    {
+      "identity" : "svprogresshud",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SVProgressHUD/SVProgressHUD.git",
+      "state" : {
+        "revision" : "ece669b5010693024572bcf7bfd5ebede904859f"
+      }
+    }
+  ],
+  "version" : 3
+}

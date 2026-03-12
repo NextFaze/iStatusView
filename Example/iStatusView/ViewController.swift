@@ -9,7 +9,6 @@
 import UIKit
 import SVProgressHUD
 import iStatusView
-import SnapKit
 
 class ViewController: UIViewController {
 
@@ -22,9 +21,10 @@ class ViewController: UIViewController {
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Change State", comment: "button title"), style: .plain, target: self, action: #selector(changeStateAction(sender:)))
         
-        self.statusViewHiddenButton.snp.makeConstraints { (make) in
-            make.center.equalToSuperview()
-        }
+        NSLayoutConstraint.activate([
+            self.statusViewHiddenButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            self.statusViewHiddenButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+        ])
         
         // #######################
         // ## iStatusView Setup ##
@@ -40,32 +40,21 @@ class ViewController: UIViewController {
         
         // ## Step 2: Construct a loading view to display
         
-        // Here we are using the nice looking spinner from SVProgressHUD
-        // Feel free to add in any loading indicator you fancy
-        let loadingView = SVIndefiniteAnimatedView()
-        loadingView.radius = 36
-        loadingView.strokeThickness = 5
-        loadingView.strokeColor = UIColor.black
-        loadingView.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
-        loadingView.snp.makeConstraints({ (make) in
-            make.width.height.equalTo(80)
-        })
-        
-        // An example using the UIActivityIndicator
-//        let loadingView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.whiteLarge)
-//        loadingView.color = UIColor.black
-//        loadingView.startAnimating()
-//        loadingView.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
+        let loadingView = self.makeLoadingView()
         
         // ## Step 3: Create the StatusView
         
         // Use the convenient create function, you must pass a loading view (even if its just a blank UIView, else nothing will work)
         self.statusView = StatusView.create(with: loadingView, addTo: self.view)
         
-        // Set the size, in this case we are using SnapKit to set the AutoLayout constraints to fill the whole view
-        self.statusView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-        }
+        // Set the size using Auto Layout constraints to fill the whole view.
+        self.statusView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.statusView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.statusView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            self.statusView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.statusView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+        ])
         
         // ## Step 4 (Optional): Listen to button presses.
         // A button appears when a button image is set when setting the state
@@ -138,12 +127,38 @@ class ViewController: UIViewController {
                                       buttonImage: nil,
                                       animate: false)
     }
+
+    private func makeLoadingView() -> UIView {
+        // The SwiftPM module exports SVProgressHUD itself, but not the internal ring view header.
+        if let loadingViewClass = NSClassFromString("SVIndefiniteAnimatedView") as? UIView.Type {
+            let loadingView = loadingViewClass.init(frame: .zero)
+            loadingView.translatesAutoresizingMaskIntoConstraints = false
+            loadingView.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
+            loadingView.setValue(36 as CGFloat, forKey: "radius")
+            loadingView.setValue(5 as CGFloat, forKey: "strokeThickness")
+            loadingView.setValue(UIColor.black, forKey: "strokeColor")
+
+            NSLayoutConstraint.activate([
+                loadingView.widthAnchor.constraint(equalToConstant: 80),
+                loadingView.heightAnchor.constraint(equalToConstant: 80),
+            ])
+
+            return loadingView
+        }
+
+        let loadingView = UIActivityIndicatorView(style: .large)
+        loadingView.color = UIColor.black
+        loadingView.startAnimating()
+        loadingView.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
+        return loadingView
+    }
     
     // MARK: - Views
     var statusView: StatusView! = nil
     
     lazy var statusViewHiddenButton: UIButton = {
         let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("Status View is Hidden: Reload", comment: "button title"), for: .normal)
         button.setTitleColor(UIColor.black, for: .normal)
         button.layer.cornerRadius = 4.0
@@ -155,4 +170,3 @@ class ViewController: UIViewController {
         return button
     }()
 }
-
