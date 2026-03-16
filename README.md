@@ -1,22 +1,34 @@
 # iStatusView
 
-[![Version](https://img.shields.io/cocoapods/v/iStatusView.svg?style=flat)](http://cocoapods.org/pods/iStatusView)
-[![License](https://img.shields.io/cocoapods/l/iStatusView.svg?style=flat)](http://cocoapods.org/pods/iStatusView)
-[![Platform](https://img.shields.io/cocoapods/p/iStatusView.svg?style=flat)](http://cocoapods.org/pods/iStatusView)
-
 ## Example
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+To run the example app, open `Example/iStatusView.xcodeproj` in Xcode. The example target links the local `iStatusView` Swift package directly, so there is no CocoaPods setup step.
 
 ## Requirements
 
+iOS 14.0+
+
 ## Installation
 
-iStatusView is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+iStatusView is available through Swift Package Manager. Add the repository URL to your project:
 
-```ruby
-pod 'iStatusView'
+```text
+https://github.com/NextFaze/iStatusView.git
+```
+
+Or declare it in `Package.swift`:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/NextFaze/iStatusView.git", from: "0.4.0")
+]
+
+targets: [
+    .target(
+        name: "YourTarget",
+        dependencies: ["iStatusView"]
+    )
+]
 ```
 
 ![Loading Screen Shot](/images/loading.png)
@@ -40,8 +52,8 @@ Feel free to add in any loading indicator you fancy
 
 An example using the UIActivityIndicator
 ```
-let loadingView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.whiteLarge)
-loadingView.color = UIColor.black
+let loadingView = UIActivityIndicatorView(style: .large)
+loadingView.color = .black
 loadingView.startAnimating()
 loadingView.bounds = CGRect(x: 0, y: 0, width: 80, height: 80)
 ```
@@ -53,12 +65,15 @@ Use the convenient create function, you must pass a loading view (even if its ju
 self.statusView = StatusView.create(with: loadingView, addTo: self.view)
 ```
 
-Set the size, in this case we are using SnapKit to set the AutoLayout constraints to fill the whole view.
-Can also use AutoResizingMasks, StoryBoard or other declarative AutoLayout code  
+Set the size using Auto Layout constraints to fill the whole view.  
 ```
-self.statusView.snp.makeConstraints { (make) in
-    make.edges.equalToSuperview()
-}
+self.statusView.translatesAutoresizingMaskIntoConstraints = false
+NSLayoutConstraint.activate([
+    self.statusView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+    self.statusView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+    self.statusView.topAnchor.constraint(equalTo: self.view.topAnchor),
+    self.statusView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+])
 ```
 
 ### Step 4 (Optional): Listen to button presses.
@@ -90,4 +105,4 @@ From here set the state to .hidden or to .message depending on the state of load
 
 ## License
 
-iStatusView is available under the Apache license. See the LICENSE file for more info.
+iStatusView is available under the Apache 2.0 license. See the LICENSE file for more info.
